@@ -154,7 +154,7 @@ export default function PokemonBattleSimulator() {
 		<div className="flex-1">
 			<div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
 				<section
-					className="glass-panel noise-overlay relative overflow-hidden rounded-[2.25rem] p-5 sm:p-8"
+					className="glass-panel noise-overlay relative overflow-hidden rounded-sm p-5 sm:p-8"
 					style={getTypeGlow(heroTypes)}
 				>
 					<div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
@@ -199,7 +199,7 @@ export default function PokemonBattleSimulator() {
 				</section>
 
 				<div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-					<section className="glass-panel rounded-[2rem] p-5 sm:p-6">
+					<section className="glass-panel rounded-sm p-5 sm:p-6">
 						<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 							<div>
 								<p className="text-xs uppercase tracking-[0.28em] text-sky-200/70">
@@ -249,7 +249,7 @@ export default function PokemonBattleSimulator() {
 						</datalist>
 
 						<div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
-							<div className="rounded-md border border-white/10 bg-black/15 p-4">
+							<div className="rounded-sm border border-white/10 bg-black/15 p-4">
 								<p className="text-xs uppercase tracking-[0.22em] text-slate-500">
 									Quick picks
 								</p>
@@ -277,14 +277,14 @@ export default function PokemonBattleSimulator() {
 								</div>
 							</div>
 
-							<label className="block rounded-md border border-white/10 bg-black/15 p-4">
+							<label className="block rounded-sm border border-white/10 bg-black/15 p-4">
 								<span className="text-xs uppercase tracking-[0.22em] text-slate-500">
 									Battle pace
 								</span>
 								<select
 									value={pace}
 									onChange={(event) => setPace(event.target.value)}
-									className="mt-3 w-full cursor-pointer rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none"
+									className="mt-3 w-full cursor-pointer rounded-sm border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none"
 								>
 									<option value="balanced">Balanced forecast</option>
 									<option value="aggressive">Aggressive damage race</option>
@@ -294,7 +294,7 @@ export default function PokemonBattleSimulator() {
 						</div>
 					</section>
 
-					<section className="glass-panel rounded-[2rem] p-5 sm:p-6">
+					<section className="glass-panel rounded-sm p-5 sm:p-6">
 						<p className="text-xs uppercase tracking-[0.28em] text-sky-200/70">
 							Forecast
 						</p>
@@ -310,7 +310,7 @@ export default function PokemonBattleSimulator() {
 							{simulation ? (
 								<BattleResult simulation={simulation} winner={winner} />
 							) : (
-								<div className="rounded-md border border-white/10 bg-white/5 p-6 text-sm leading-7 text-slate-300">
+								<div className="rounded-sm border border-white/10 bg-white/5 p-6 text-sm leading-7 text-slate-300">
 									Loading combatants and type relations. If a Pokemon name
 									does not resolve, check the spelling against the PokeAPI
 									directory suggestions.
@@ -337,7 +337,7 @@ function BattlePicker({
 	const types = pokemon?.types.map((entry) => entry.type.name) ?? [];
 
 	return (
-		<div className="rounded-md border border-white/10 bg-black/15 p-4">
+		<div className="rounded-sm border border-white/10 bg-black/15 p-4">
 			<p className="text-xs uppercase tracking-[0.22em] text-slate-500">
 				{label}
 			</p>
@@ -350,13 +350,13 @@ function BattlePicker({
 				}}
 				list="pokemon-battle-directory"
 				placeholder={side === "left" ? DEFAULT_LEFT : DEFAULT_RIGHT}
-				className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500"
+				className="mt-3 w-full rounded-sm border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500"
 			/>
 
 			{pokemon ? (
-				<div className="mt-4 rounded-[1.5rem] border border-white/10 p-4" style={getTypeGlow(types)}>
+				<div className="mt-4 rounded-sm border border-white/10 p-4" style={getTypeGlow(types)}>
 					<div className="flex items-center gap-4">
-						<div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-[1.25rem] border border-white/10 bg-black/15">
+						<div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-black/15">
 							<Image
 								src={getPokemonArtwork(pokemon)}
 								alt={pokemon.name}
@@ -386,7 +386,7 @@ function BattlePicker({
 					<select
 						value={moveType}
 						onChange={(event) => onMoveTypeChange(event.target.value)}
-						className="mt-4 w-full cursor-pointer rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none"
+						className="mt-4 w-full cursor-pointer rounded-sm border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none"
 					>
 						<option value="auto">Auto best STAB</option>
 						{types.map((typeName) => (
@@ -397,7 +397,7 @@ function BattlePicker({
 					</select>
 				</div>
 			) : (
-				<div className="mt-4 rounded-md border border-dashed border-white/12 bg-white/5 p-5 text-sm text-slate-300">
+				<div className="mt-4 rounded-sm border border-dashed border-white/12 bg-white/5 p-5 text-sm text-slate-300">
 					{pokemonError
 						? "That Pokemon could not be found. Try a lowercase API name like mr-mime or ho-oh."
 						: "Loading Pokemon battle data..."}
@@ -410,7 +410,7 @@ function BattlePicker({
 function BattleResult({ simulation, winner }) {
 	return (
 		<div className="space-y-5">
-			<div className="rounded-md border border-white/10 bg-white/5 p-5">
+			<div className="rounded-sm border border-white/10 bg-white/5 p-5">
 				<div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 					<div>
 						<p className="text-xs uppercase tracking-[0.22em] text-slate-500">
@@ -436,7 +436,7 @@ function BattleResult({ simulation, winner }) {
 				<BattleDamageCard fighter={simulation.right} />
 			</div>
 
-			<div className="rounded-md border border-white/10 bg-black/15 p-5">
+			<div className="rounded-sm border border-white/10 bg-black/15 p-5">
 				<div className="flex items-center justify-between gap-4">
 					<h3 className="text-lg font-semibold text-white">Battle log</h3>
 					<span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.18em] text-slate-500">
@@ -447,7 +447,7 @@ function BattleResult({ simulation, winner }) {
 					{simulation.turns.map((turn) => (
 						<div
 							key={`${turn.round}-${turn.attacker}-${turn.remainingHp}-${turn.order}`}
-							className="rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm leading-6 text-slate-300"
+							className="rounded-sm border border-white/8 bg-white/5 px-4 py-3 text-sm leading-6 text-slate-300"
 						>
 							<span className="font-semibold text-white">
 								Turn {turn.round}: {formatLabel(turn.attacker)}
@@ -474,7 +474,7 @@ function BattleHpMeter({ fighter }) {
 	);
 
 	return (
-		<div className="rounded-[1.4rem] border border-white/10 bg-black/15 p-4">
+		<div className="rounded-sm border border-white/10 bg-black/15 p-4">
 			<p className="truncate text-sm font-semibold text-white">
 				{formatLabel(fighter.pokemon.name)}
 			</p>
@@ -498,7 +498,7 @@ function BattleDamageCard({ fighter }) {
 	const meta = getTypeMeta(fighter.moveType);
 
 	return (
-		<div className="rounded-md border border-white/10 bg-black/15 p-5">
+		<div className="rounded-sm border border-white/10 bg-black/15 p-5">
 			<div className="flex items-center justify-between gap-3">
 				<div>
 					<p className="text-lg font-semibold text-white">
@@ -527,7 +527,7 @@ function BattleDamageCard({ fighter }) {
 
 function BattleStat({ label, value }) {
 	return (
-		<div className="rounded-2xl bg-white/5 px-2 py-4">
+		<div className="rounded-sm bg-white/5 px-2 py-4">
 			<p className="text-xl font-semibold text-white">{value}</p>
 			<p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-slate-500">
 				{label}
@@ -538,7 +538,7 @@ function BattleStat({ label, value }) {
 
 function MetricCard({ label, value, caption }) {
 	return (
-		<div className="rounded-[1.6rem] border border-white/10 bg-white/6 px-4 py-4 shadow-lg shadow-slate-950/20">
+		<div className="rounded-sm border border-white/10 bg-white/6 px-4 py-4 shadow-lg shadow-slate-950/20">
 			<p className="text-xs uppercase tracking-[0.26em] text-slate-400">
 				{label}
 			</p>

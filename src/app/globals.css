@@ -31,11 +31,14 @@ body {
   min-height: 100vh;
   color: var(--foreground);
   font-family: var(--font-space-grotesk), sans-serif;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 28%),
     radial-gradient(circle at top right, rgba(251, 113, 133, 0.18), transparent 24%),
     radial-gradient(circle at 50% 20%, rgba(250, 204, 21, 0.09), transparent 30%),
     linear-gradient(180deg, #07101f 0%, #081223 38%, #020817 100%);
+  background-size: 120% 120%, 115% 115%, 110% 110%, 100% 100%;
+  animation: atmosphere-shift 22s ease-in-out infinite alternate;
 }
 
 body::before {
@@ -49,6 +52,24 @@ body::before {
   background-size: 32px 32px;
   mask-image: radial-gradient(circle at center, black, transparent 80%);
   opacity: 0.34;
+  animation: grid-drift 30s linear infinite;
+  z-index: -2;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 28%, rgba(34, 211, 238, 0.16), transparent 16%),
+    radial-gradient(circle at 82% 18%, rgba(251, 113, 133, 0.14), transparent 18%),
+    radial-gradient(circle at 68% 82%, rgba(250, 204, 21, 0.1), transparent 20%);
+  filter: blur(24px);
+  opacity: 0.8;
+  transform: translate3d(0, 0, 0);
+  animation: orbital-glow 28s ease-in-out infinite alternate;
+  z-index: -1;
 }
 
 ::selection {
@@ -136,10 +157,50 @@ select {
   }
 }
 
+@keyframes atmosphere-shift {
+  0% {
+    background-position: 0% 0%, 100% 0%, 50% 12%, 0% 0%;
+  }
+  100% {
+    background-position: 16% 8%, 84% 14%, 42% 24%, 0% 0%;
+  }
+}
+
+@keyframes grid-drift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 32px 32px, 32px 32px;
+  }
+}
+
+@keyframes orbital-glow {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, 1.5%, 0) scale(1.04);
+  }
+  100% {
+    transform: translate3d(1%, -2%, 0) scale(1.02);
+  }
+}
+
 .floaty {
   animation: floaty 6s ease-in-out infinite;
 }
 
 .pulse-ring {
   animation: pulse-ring 4.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }
