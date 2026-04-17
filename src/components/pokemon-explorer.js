@@ -25,6 +25,7 @@ import {
 export default function PokemonExplorer() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedType, setSelectedType] = useState("all");
+	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 	const [pagination, setPagination] = useState({
 		key: "all|",
 		page: 1,
@@ -169,7 +170,13 @@ export default function PokemonExplorer() {
 					teamCount={team.length}
 				/>
 
-				<div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_390px]">
+				<div
+					className={`grid gap-8 ${
+						isSidebarOpen
+							? "lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_390px]"
+							: "lg:grid-cols-1"
+					}`}
+				>
 					<section className="space-y-6">
 						<div className="glass-panel noise-overlay overflow-hidden rounded-md p-5 sm:p-6">
 							<div className="flex flex-col gap-5">
@@ -183,9 +190,24 @@ export default function PokemonExplorer() {
 											when something clicks.
 										</h2>
 									</div>
-									<div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300">
-										Showing {displayStart}-{displayEnd} of{" "}
-										{filteredEntries.length}
+									<div className="flex flex-wrap items-center gap-2">
+										<button
+											type="button"
+											onClick={() =>
+												setIsSidebarOpen((current) => !current)
+											}
+											aria-expanded={isSidebarOpen}
+											className="rounded-full border border-sky-300/25 bg-sky-400/10 px-4 py-2 text-sm font-medium text-sky-100 hover:border-sky-200/50 hover:bg-sky-300/15"
+										>
+											{isSidebarOpen ? "Hide team panel" : "Show team panel"}
+											<span className="ml-2 text-sky-200/70">
+												{team.length}/6
+											</span>
+										</button>
+										<div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300">
+											Showing {displayStart}-{displayEnd} of{" "}
+											{filteredEntries.length}
+										</div>
 									</div>
 								</div>
 
@@ -269,13 +291,21 @@ export default function PokemonExplorer() {
 						</div>
 
 						{isBusy ? (
-							<div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+							<div
+								className={`grid gap-4 sm:grid-cols-2 ${
+									isSidebarOpen ? "xl:grid-cols-3" : "lg:grid-cols-3 xl:grid-cols-4"
+								}`}
+							>
 								{Array.from({ length: 6 }).map((_, index) => (
 									<SkeletonCard key={index} />
 								))}
 							</div>
 						) : (
-							<div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 max-h">
+							<div
+								className={`grid gap-4 sm:grid-cols-2 ${
+									isSidebarOpen ? "xl:grid-cols-3" : "lg:grid-cols-3 xl:grid-cols-4"
+								}`}
+							>
 								{visibleEntries.map((entry, index) => (
 									<PokemonCard
 										key={entry.name}
@@ -323,16 +353,18 @@ export default function PokemonExplorer() {
 						) : null}
 					</section>
 
-					<TeamBuilder
-						clearTeam={clearTeam}
-						isHydrated={isHydrated}
-						maxTeamSize={maxTeamSize}
-						team={team}
-						teamPokemon={teamPokemon}
-						teamSummary={teamSummary}
-						toggleTeamMember={toggleTeamMember}
-						typeMatrix={typeMatrix}
-					/>
+					{isSidebarOpen ? (
+						<TeamBuilder
+							clearTeam={clearTeam}
+							isHydrated={isHydrated}
+							maxTeamSize={maxTeamSize}
+							team={team}
+							teamPokemon={teamPokemon}
+							teamSummary={teamSummary}
+							toggleTeamMember={toggleTeamMember}
+							typeMatrix={typeMatrix}
+						/>
+					) : null}
 				</div>
 			</div>
 		</div>
