@@ -56,7 +56,8 @@ export function getTypeGlow(types = []) {
   const secondary = getTypeMeta(types[1] ?? types[0]).accent;
 
   return {
-    background: `radial-gradient(circle at 30% 20%, ${primary}33 0%, transparent 40%), radial-gradient(circle at 80% 30%, ${secondary}2e 0%, transparent 36%), linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(8, 15, 30, 0.92))`,
+    "--type-primary": primary,
+    "--type-secondary": secondary,
   };
 }
 

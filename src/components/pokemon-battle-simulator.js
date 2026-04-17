@@ -65,7 +65,8 @@ export default function PokemonBattleSimulator() {
 	const teamQueries = useQueries({
 		queries: team.map((member) => ({
 			queryKey: ["pokemon-team", member.name],
-			queryFn: ({ signal }) => fetchPokemonByName(member.name, { signal }),
+			queryFn: ({ signal }) =>
+				fetchPokemonByName(member.name, { signal }),
 			staleTime: 1000 * 60 * 60 * 12,
 		})),
 	});
@@ -172,16 +173,21 @@ export default function PokemonBattleSimulator() {
 								Test one-on-one matchups in the battle lab.
 							</h1>
 							<p className="mt-4 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
-								Choose any Pokemon, tune their move typing and battle pace,
-								then preview a deterministic turn-by-turn forecast based on
-								stats, speed, STAB, and type effectiveness.
+								Choose any Pokemon, tune their move typing and
+								battle pace, then preview a deterministic
+								turn-by-turn forecast based on stats, speed,
+								STAB, and type effectiveness.
 							</p>
 						</div>
 
 						<div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
 							<MetricCard
 								label="Current Winner"
-								value={winner ? formatLabel(winner.name) : "Awaiting Data"}
+								value={
+									winner
+										? formatLabel(winner.name)
+										: "Awaiting Data"
+								}
 								caption="Predicted by remaining HP"
 							/>
 							<MetricCard
@@ -198,7 +204,7 @@ export default function PokemonBattleSimulator() {
 					</div>
 				</section>
 
-				<div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+				<div className="flex flex-col gap-8 ">
 					<section className="glass-panel rounded-sm p-5 sm:p-6">
 						<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 							<div>
@@ -209,17 +215,19 @@ export default function PokemonBattleSimulator() {
 									Build the matchup
 								</h2>
 								<p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
-									Type a Pokemon name or use the quick-pick chips from your
-									saved team. The datalist is powered by the full PokeAPI
-									directory.
+									Type a Pokemon name or use the quick-pick
+									chips from your saved team. The datalist is
+									powered by the full PokeAPI directory.
 								</p>
 							</div>
 							<span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.18em] text-slate-400">
-								{directory.length ? `${directory.length}+ Pokemon` : "Loading"}
+								{directory.length
+									? `${directory.length}+ Pokemon`
+									: "Loading"}
 							</span>
 						</div>
 
-						<div className="mt-6 grid gap-4 lg:grid-cols-2">
+						<div className="mt-6 flex flex-col gap-4">
 							<BattlePicker
 								label="Challenger"
 								moveType={safeLeftMoveType}
@@ -270,8 +278,9 @@ export default function PokemonBattleSimulator() {
 										))
 									) : (
 										<p className="text-sm leading-7 text-slate-400">
-											Add Pokemon to your team on the explorer page to
-											surface quick-pick chips here.
+											Add Pokemon to your team on the
+											explorer page to surface quick-pick
+											chips here.
 										</p>
 									)}
 								</div>
@@ -283,12 +292,20 @@ export default function PokemonBattleSimulator() {
 								</span>
 								<select
 									value={pace}
-									onChange={(event) => setPace(event.target.value)}
+									onChange={(event) =>
+										setPace(event.target.value)
+									}
 									className="mt-3 w-full cursor-pointer rounded-sm border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none"
 								>
-									<option value="balanced">Balanced forecast</option>
-									<option value="aggressive">Aggressive damage race</option>
-									<option value="guarded">Guarded endurance duel</option>
+									<option value="balanced">
+										Balanced forecast
+									</option>
+									<option value="aggressive">
+										Aggressive damage race
+									</option>
+									<option value="guarded">
+										Guarded endurance duel
+									</option>
 								</select>
 							</label>
 						</div>
@@ -302,18 +319,23 @@ export default function PokemonBattleSimulator() {
 							Battle result
 						</h2>
 						<p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
-							This is a planning simulator, not a full cartridge battle engine:
-							it intentionally favors readability and tactical comparison.
+							This is a planning simulator, not a full cartridge
+							battle engine: it intentionally favors readability
+							and tactical comparison.
 						</p>
 
 						<div className="mt-6">
 							{simulation ? (
-								<BattleResult simulation={simulation} winner={winner} />
+								<BattleResult
+									simulation={simulation}
+									winner={winner}
+								/>
 							) : (
 								<div className="rounded-sm border border-white/10 bg-white/5 p-6 text-sm leading-7 text-slate-300">
-									Loading combatants and type relations. If a Pokemon name
-									does not resolve, check the spelling against the PokeAPI
-									directory suggestions.
+									Loading combatants and type relations. If a
+									Pokemon name does not resolve, check the
+									spelling against the PokeAPI directory
+									suggestions.
 								</div>
 							)}
 						</div>
@@ -354,7 +376,10 @@ function BattlePicker({
 			/>
 
 			{pokemon ? (
-				<div className="mt-4 rounded-sm border border-white/10 p-4" style={getTypeGlow(types)}>
+				<div
+					className="mt-4 rounded-sm border border-white/10 p-4"
+					style={getTypeGlow(types)}
+				>
 					<div className="flex items-center gap-4">
 						<div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-sm border border-white/10 bg-black/15">
 							<Image
@@ -371,9 +396,9 @@ function BattlePicker({
 								{formatLabel(pokemon.name)}
 							</p>
 							<p className="mt-1 text-sm text-slate-300">
-								BST {getBaseStatTotal(pokemon.stats)} · SPD{" "}
-								{getStatValue(pokemon, "speed")} · HP{" "}
-								{getStatValue(pokemon, "hp")}
+								<b>BST:</b> {getBaseStatTotal(pokemon.stats)} ·
+								<b>SPD:</b> {getStatValue(pokemon, "speed")} ·
+								<b>HP:</b> {getStatValue(pokemon, "hp")}
 							</p>
 							<div className="mt-3 flex flex-wrap gap-2">
 								{types.map((typeName) => (
@@ -385,7 +410,9 @@ function BattlePicker({
 
 					<select
 						value={moveType}
-						onChange={(event) => onMoveTypeChange(event.target.value)}
+						onChange={(event) =>
+							onMoveTypeChange(event.target.value)
+						}
 						className="mt-4 w-full cursor-pointer rounded-sm border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none"
 					>
 						<option value="auto">Auto best STAB</option>
@@ -420,8 +447,9 @@ function BattleResult({ simulation, winner }) {
 							{winner ? formatLabel(winner.name) : "Draw"}
 						</h3>
 						<p className="mt-2 text-sm leading-7 text-slate-300">
-							Speed determines turn order. The winner is selected by remaining
-							HP after the forecast window or by knockout.
+							Speed determines turn order. The winner is selected
+							by remaining HP after the forecast window or by
+							knockout.
 						</p>
 					</div>
 					<div className="grid gap-3 sm:grid-cols-2 lg:min-w-80">
@@ -438,7 +466,9 @@ function BattleResult({ simulation, winner }) {
 
 			<div className="rounded-sm border border-white/10 bg-black/15 p-5">
 				<div className="flex items-center justify-between gap-4">
-					<h3 className="text-lg font-semibold text-white">Battle log</h3>
+					<h3 className="text-lg font-semibold text-white">
+						Battle log
+					</h3>
 					<span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.18em] text-slate-500">
 						{simulation.turns.length} turns
 					</span>
@@ -453,10 +483,11 @@ function BattleResult({ simulation, winner }) {
 								Turn {turn.round}: {formatLabel(turn.attacker)}
 							</span>{" "}
 							used a {formatLabel(turn.moveType)} strike for{" "}
-							<span className="text-sky-100">{turn.damage}</span> damage
-							against {formatLabel(turn.defender)}.
+							<span className="text-sky-100">{turn.damage}</span>{" "}
+							damage against {formatLabel(turn.defender)}.
 							<span className="ml-1 text-slate-500">
-								{turn.effectivenessLabel} · {turn.defenderHpLabel}
+								{turn.effectivenessLabel} ·{" "}
+								{turn.defenderHpLabel}
 							</span>
 						</div>
 					))}
@@ -608,7 +639,8 @@ function simulateBattle({
 		settings,
 	);
 	const first =
-		getStatValue(leftPokemon, "speed") >= getStatValue(rightPokemon, "speed")
+		getStatValue(leftPokemon, "speed") >=
+		getStatValue(rightPokemon, "speed")
 			? left
 			: right;
 	const second = first === left ? right : left;
