@@ -21,6 +21,7 @@ import {
 	getTypeMeta,
 	summarizeTeam,
 } from "../lib/pokemon-utils";
+import { useRouter } from "next/navigation";
 
 export default function PokemonExplorer() {
 	const [searchTerm, setSearchTerm] = useState("");
@@ -185,6 +186,10 @@ export default function PokemonExplorer() {
 										<h2 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">
 											Pick your pokemon
 										</h2>
+										<p>
+											Hover over a pokemon to see its
+											details
+										</p>
 									</div>
 									<div className="flex justify-end gap-2">
 										<button
@@ -207,7 +212,7 @@ export default function PokemonExplorer() {
 									</div>
 								</div>
 
-								<div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
+								<div className="flex flex-col">
 									<label className="group rounded-3xl border border-white/10 bg-black/20 p-4 shadow-lg shadow-slate-950/20">
 										<span className="text-xs uppercase tracking-[0.24em] text-slate-400">
 											Search Pokedex
@@ -224,37 +229,6 @@ export default function PokemonExplorer() {
 											placeholder="Search for pikachu, gardevoir, lucario..."
 											className="mt-3 w-full bg-transparent text-lg text-white outline-none placeholder:text-slate-500"
 										/>
-									</label>
-
-									<label className="rounded-3xl border border-white/10 bg-black/20 p-4 shadow-lg shadow-slate-950/20">
-										<span className="text-xs uppercase tracking-[0.24em] text-slate-400">
-											Type Filter
-										</span>
-										<select
-											value={selectedType}
-											onChange={(event) =>
-												setSelectedType(
-													event.target.value,
-												)
-											}
-											className="mt-3 w-full cursor-pointer rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-base text-white outline-none"
-										>
-											<option value="all">
-												All types
-											</option>
-											{(typeListQuery.data ?? []).map(
-												(typeEntry) => (
-													<option
-														key={typeEntry.name}
-														value={typeEntry.name}
-													>
-														{formatLabel(
-															typeEntry.name,
-														)}
-													</option>
-												),
-											)}
-										</select>
 									</label>
 								</div>
 
@@ -418,21 +392,81 @@ function PokemonCard({
 	if (isLoading || !pokemon) {
 		return <SkeletonCard />;
 	}
+	const router = useRouter();
 
 	const types = pokemon.types.map((entry) => entry.type.name);
 	const total = getBaseStatTotal(pokemon.stats);
 
 	return (
 		<article
-			className="group glass-panel noise-overlay relative overflow-hidden rounded-md p-4"
+			className={`group glass-panel noise-overlay relative overflow-hidden rounded-md p-4 cursor-pointer ${
+				isInTeam ? "selected-pokemon-border" : ""
+			}`}
 			style={getTypeGlow(types)}
 		>
 			<div className="absolute right-4 top-4 rounded-full border border-white/10 bg-slate-950/60 px-3 py-1 text-xs font-medium tracking-[0.24em] text-slate-300">
 				#{String(pokemon.id).padStart(3, "0")}
 			</div>
+			<div
+				className="absolute glass-panel backdrop-blur-md group-hover:opacity-100 opacity-0 z-20 w-full h-full left-0 top-0 duration-500 flex flex-col p-4 items-center"
+				onClick={onToggleTeam}
+			>
+				<div className="relative flex h-48 w-full items-center justify-center overflow-hidden rounded-md border border-white/10 bg-black/15 mb-2">
+					<div className="pulse-ring absolute inset-5 rounded-full bg-white/6 blur-2xl mb-2" />
+					<Image
+						src={getPokemonArtwork(pokemon)}
+						alt={pokemon.name}
+						width={160}
+						height={160}
+						unoptimized
+						className="floaty relative h-36 w-36 object-contain drop-shadow-[0_20px_30px_rgba(2,6,23,0.65)]"
+					/>
+				</div>
+				<div className="flex flex-wrap gap-2 scale-90 items-center justify-center">
+					{types.map((typeName) => (
+						<TypeBadge key={typeName} type={typeName} />
+					))}
+				</div>
 
+				<h3 className="mt-0 text-2xl font-semibold text-white">
+					{formatLabel(pokemon.name)}
+				</h3>
+				<Link
+					href={`/pokemon/${pokemon.id}`}
+					target="_blank"
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						window.open(`/pokemon/${pokemon.id}`, "_blank");
+					}}
+					className="rounded-lg px-2 py-2 mt-3 text-xs font-medium border border-sky-700 hover:scale-105 transition-all duration-500 pointer-events-auto"
+				>
+					Click to view pokemon details
+				</Link>
+				{!isInTeam && isTeamFull ? (
+					<i className="absolute top-2 text-sm">Team is full</i>
+				) : (
+					<i className="absolute top-2 text-sm">
+						Click to {isInTeam ? "Remove from team" : "add to team"}
+					</i>
+				)}
+				<button
+					type="button"
+					onClick={onToggleTeam}
+					disabled={!isInTeam && isTeamFull}
+					className={`rounded-md px-2 py-1 mt-3 text-xs font-medium  cursor-pointer ${
+						isInTeam
+							? "border border-emerald-300/30 bg-emerald-400/15 text-emerald-600"
+							: isTeamFull
+								? "cursor-not-allowed border border-white/10 bg-white/5 text-slate-500"
+								: "border border-sky-300/30 bg-sky-400/15 text-sky-600 hover:scale-[1.02]"
+					}`}
+				>
+					{isInTeam ? "Remove from team" : "+ Add to team"}
+				</button>
+			</div>
 			<div className="relative flex min-h-full flex-col">
-				<Link href={`/pokemon/${pokemon.name}`} className="block">
+				<div className="block">
 					<div className="relative flex h-48 items-center justify-center overflow-hidden rounded-md border border-white/10 bg-black/15">
 						<div className="pulse-ring absolute inset-5 rounded-full bg-white/6 blur-2xl" />
 						<Image
@@ -457,29 +491,10 @@ function PokemonCard({
 						</h3>
 						<p className="mt-2 text-sm leading-7 text-slate-300">
 							Height {pokemon.height / 10}m · Weight{" "}
-							{pokemon.weight / 10}kg · Base total {total}
+							{pokemon.weight / 10}kg <br /> Base total:{" "}
+							<b>{total}</b>
 						</p>
 					</div>
-				</Link>
-
-				<div className="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
-					<span className="text-sm text-slate-400">
-						Tap in for stats, moves, evolutions.
-					</span>
-					<button
-						type="button"
-						onClick={onToggleTeam}
-						disabled={!isInTeam && isTeamFull}
-						className={`rounded-full px-4 py-2 text-sm font-medium ${
-							isInTeam
-								? "border border-emerald-300/30 bg-emerald-400/15 text-emerald-100"
-								: isTeamFull
-									? "cursor-not-allowed border border-white/10 bg-white/5 text-slate-500"
-									: "border border-sky-300/30 bg-sky-400/15 text-sky-100 hover:scale-[1.02]"
-						}`}
-					>
-						{isInTeam ? "Remove" : "Add to team"}
-					</button>
 				</div>
 			</div>
 		</article>
@@ -868,7 +883,7 @@ function TeamBuilder({
 													weakTo.map((entry) => (
 														<span
 															key={entry.type}
-															className="rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-xs font-medium text-rose-100"
+															className="rounded-full border border-rose-300/20 bg-rose-400/10 px-3 py-1 text-xs font-medium text-rose-500"
 														>
 															Weak to{" "}
 															{formatLabel(

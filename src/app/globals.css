@@ -199,6 +199,11 @@ input {
 		rgba(8, 15, 30, 0.76)
 	);
 }
+.selected-pokemon-border {
+	box-shadow:
+		0 0 4px 0 var(--type-primary),
+		0 0 4px 10px var(--type-primary) !important;
+}
 
 .glass-panel[style*="--type-primary"] {
 	background:
