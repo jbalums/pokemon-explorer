@@ -29,12 +29,14 @@ export default function PokemonDetail({ name }) {
   const decodedName = decodeURIComponent(name).toLowerCase();
   const { isInTeam, isTeamFull, toggleTeamMember } = useTeam();
 
+  // Primary detail request: all dependent species/evolution queries wait for this id.
   const pokemonQuery = useQuery({
     queryKey: ["pokemon-detail", decodedName],
     queryFn: ({ signal }) => fetchPokemonByName(decodedName, { signal }),
     staleTime: 1000 * 60 * 60 * 12,
   });
 
+  // Species data provides flavor text and the evolution-chain resource URL.
   const speciesQuery = useQuery({
     queryKey: ["pokemon-species", pokemonQuery.data?.id],
     queryFn: ({ signal }) => fetchPokemonSpecies(pokemonQuery.data.id, { signal }),
@@ -42,6 +44,7 @@ export default function PokemonDetail({ name }) {
     staleTime: 1000 * 60 * 60 * 12,
   });
 
+  // PokeAPI links evolution chains by URL, so fetchResource handles the full URL directly.
   const evolutionQuery = useQuery({
     queryKey: ["pokemon-evolution-chain", speciesQuery.data?.evolution_chain?.url],
     queryFn: ({ signal }) => fetchResource(speciesQuery.data.evolution_chain.url, { signal }),
@@ -52,6 +55,7 @@ export default function PokemonDetail({ name }) {
   const pokemon = pokemonQuery.data;
   const species = speciesQuery.data;
   const evolution = evolutionQuery.data;
+  // Derived display data keeps the JSX focused on rendering instead of shaping API responses.
   const moves = useMemo(() => pickFeatureMoves(pokemon?.moves ?? []), [pokemon?.moves]);
   const flavorText = getEnglishFlavorText(species);
   const statChart = pokemon ? buildRadarChart(pokemon.stats) : null;

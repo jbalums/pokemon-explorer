@@ -60,7 +60,7 @@ Useful routes:
 
 ## D. Demo Link
 
-Demo link: `<add-demo-link-here>`
+Demo link: `https://pokemon-explorer-omega-eight.vercel.app/`
 
 ## E. Challenges Faced And Solutions
 

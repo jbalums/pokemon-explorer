@@ -41,11 +41,13 @@ export default function PokemonBattleSimulator() {
 	const [pace, setPace] = useState("balanced");
 	const { team } = useTeam();
 
+	// API integration: the directory powers the datalist so users can type any Pokemon name.
 	const directoryQuery = useQuery({
 		queryKey: ["pokemon-directory"],
 		queryFn: ({ signal }) => fetchPokemonDirectory({ signal }),
 	});
 
+	// Each combatant is fetched independently so changing one side does not reset the other.
 	const leftQuery = useQuery({
 		queryKey: ["battle-pokemon", normalizePokemonName(leftName)],
 		queryFn: ({ signal }) =>
@@ -54,6 +56,7 @@ export default function PokemonBattleSimulator() {
 		staleTime: 1000 * 60 * 60 * 12,
 	});
 
+	// The right-side query mirrors the challenger query and shares cache keys by Pokemon name.
 	const rightQuery = useQuery({
 		queryKey: ["battle-pokemon", normalizePokemonName(rightName)],
 		queryFn: ({ signal }) =>
@@ -62,6 +65,7 @@ export default function PokemonBattleSimulator() {
 		staleTime: 1000 * 60 * 60 * 12,
 	});
 
+	// Saved team entries become quick-pick chips after they are hydrated from PokeAPI.
 	const teamQueries = useQueries({
 		queries: team.map((member) => ({
 			queryKey: ["pokemon-team", member.name],
@@ -71,6 +75,7 @@ export default function PokemonBattleSimulator() {
 		})),
 	});
 
+	// Type relation data is fetched once and transformed into the battle effectiveness matrix.
 	const typeListQuery = useQuery({
 		queryKey: ["pokemon-types"],
 		queryFn: ({ signal }) => fetchTypes({ signal }),
@@ -115,6 +120,7 @@ export default function PokemonBattleSimulator() {
 		? rightMoveType
 		: "auto";
 
+	// Complex logic: the forecast is derived from combatants, move typing, pace, and type matrix.
 	const simulation = useMemo(() => {
 		if (!leftPokemon || !rightPokemon || !matrixReady) {
 			return null;

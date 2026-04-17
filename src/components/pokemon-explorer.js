@@ -21,7 +21,6 @@ import {
 	getTypeMeta,
 	summarizeTeam,
 } from "../lib/pokemon-utils";
-import { useRouter } from "next/navigation";
 
 export default function PokemonExplorer() {
 	const [searchTerm, setSearchTerm] = useState("");
@@ -44,17 +43,20 @@ export default function PokemonExplorer() {
 		isTeamFull,
 	} = useTeam();
 
+	// API integration: load the full directory once, then use it for search and pagination.
 	const directoryQuery = useQuery({
 		queryKey: ["pokemon-directory"],
 		queryFn: ({ signal }) => fetchPokemonDirectory({ signal }),
 	});
 
+	// Type data powers both the filter chips and the team effectiveness matrix.
 	const typeListQuery = useQuery({
 		queryKey: ["pokemon-types"],
 		queryFn: ({ signal }) => fetchTypes({ signal }),
 		staleTime: 1000 * 60 * 60 * 12,
 	});
 
+	// Fetch the selected type only when a type filter is active to avoid unnecessary requests.
 	const selectedTypeQuery = useQuery({
 		queryKey: ["pokemon-type-filter", selectedType],
 		queryFn: ({ signal }) => fetchTypeByName(selectedType, { signal }),
@@ -62,6 +64,7 @@ export default function PokemonExplorer() {
 		staleTime: 1000 * 60 * 60 * 12,
 	});
 
+	// Convert the selected type response into a Set for fast membership checks during filtering.
 	const allowedNames = useMemo(() => {
 		if (selectedType === "all") {
 			return null;
@@ -71,6 +74,7 @@ export default function PokemonExplorer() {
 		return new Set(pokemonEntries.map((entry) => entry.pokemon.name));
 	}, [selectedType, selectedTypeQuery.data]);
 
+	// Search and type filters are applied locally against the cached directory for fast UI updates.
 	const filteredEntries = useMemo(() => {
 		const normalizedSearch = deferredSearch.trim().toLowerCase();
 
@@ -91,6 +95,7 @@ export default function PokemonExplorer() {
 		1,
 		Math.ceil(filteredEntries.length / PAGE_SIZE),
 	);
+	// Keep pagination scoped to the current search/type combination so filters reset to page one.
 	const currentPage =
 		pagination.key === filterKey
 			? Math.min(pagination.page, totalPages)
@@ -101,6 +106,7 @@ export default function PokemonExplorer() {
 	const displayStart = filteredEntries.length ? pageStart + 1 : 0;
 	const displayEnd = Math.min(pageEnd, filteredEntries.length);
 
+	// Hydrate only the Pokemon visible on the current page instead of fetching every detail record.
 	const pokemonQueries = useQueries({
 		queries: visibleEntries.map((entry) => ({
 			queryKey: ["pokemon-card", entry.name],
@@ -109,6 +115,7 @@ export default function PokemonExplorer() {
 		})),
 	});
 
+	// Team members are persisted by name/id, then rehydrated from PokeAPI for analysis.
 	const teamQueries = useQueries({
 		queries: team.map((member) => ({
 			queryKey: ["pokemon-team", member.name],
@@ -118,6 +125,7 @@ export default function PokemonExplorer() {
 		})),
 	});
 
+	// Build a complete type matrix from PokeAPI type detail responses for matchup calculations.
 	const typeMatrixQueries = useQueries({
 		queries: (typeListQuery.data ?? []).map((typeEntry) => ({
 			queryKey: ["type-detail", typeEntry.name],
@@ -132,6 +140,7 @@ export default function PokemonExplorer() {
 		[teamQueries],
 	);
 
+	// Wait until all type records are available before exposing the matrix to team summaries.
 	const typeMatrix = useMemo(() => {
 		if (!(typeListQuery.data ?? []).length) {
 			return {};
@@ -392,7 +401,6 @@ function PokemonCard({
 	if (isLoading || !pokemon) {
 		return <SkeletonCard />;
 	}
-	const router = useRouter();
 
 	const types = pokemon.types.map((entry) => entry.type.name);
 	const total = getBaseStatTotal(pokemon.stats);

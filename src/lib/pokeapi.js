@@ -2,6 +2,7 @@ const API_BASE = "https://pokeapi.co/api/v2";
 
 export const PAGE_SIZE = 24;
 
+// Central API helper: accepts either a PokeAPI path or a full resource URL from another response.
 export async function fetchJson(pathOrUrl, signal) {
   const url = pathOrUrl.startsWith("http") ? pathOrUrl : `${API_BASE}${pathOrUrl}`;
   const response = await fetch(url, { signal });
@@ -13,6 +14,7 @@ export async function fetchJson(pathOrUrl, signal) {
   return response.json();
 }
 
+// Fetch a lightweight name/url directory once, then hydrate visible cards with detail requests.
 export async function fetchPokemonDirectory({ signal } = {}) {
   const data = await fetchJson("/pokemon?limit=1500&offset=0", signal);
   return data.results;
@@ -30,6 +32,7 @@ export async function fetchResource(url, { signal } = {}) {
   return fetchJson(url, signal);
 }
 
+// PokeAPI includes non-standard helper types; hide them from user-facing filters.
 export async function fetchTypes({ signal } = {}) {
   const data = await fetchJson("/type", signal);
   return data.results.filter(
@@ -46,6 +49,7 @@ export function extractIdFromUrl(url) {
   return match ? Number(match[1]) : null;
 }
 
+// Prefer official artwork, but keep sprite fallbacks so older or unusual entries still render.
 export function getPokemonArtwork(pokemon) {
   return (
     pokemon?.sprites?.other?.["official-artwork"]?.front_default ??
