@@ -551,6 +551,7 @@ function getPaginationWindow(currentPage, totalPages) {
 		return Array.from({ length: totalPages }, (_, index) => index + 1);
 	}
 
+	// Keep first/last pages visible while collapsing the middle around the current page.
 	const pages = [1];
 	const start = Math.max(2, currentPage - 1);
 	const end = Math.min(totalPages - 1, currentPage + 1);

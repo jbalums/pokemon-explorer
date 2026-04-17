@@ -72,6 +72,7 @@ export function getBaseStatTotal(stats = []) {
   return stats.reduce((total, statEntry) => total + statEntry.base_stat, 0);
 }
 
+// Prefer level-up moves so the detail page surfaces attacks that feel natural to the Pokemon.
 export function pickFeatureMoves(moves = [], limit = 12) {
   return [...moves]
     .map((moveEntry) => {
@@ -105,6 +106,7 @@ export function pickFeatureMoves(moves = [], limit = 12) {
     .slice(0, limit);
 }
 
+// Converts six Pokemon stats into SVG polygon coordinates for the radar chart.
 export function buildRadarChart(stats = [], size = 260, maxStat = 180) {
   const center = size / 2;
   const radius = size * 0.34;
@@ -141,6 +143,7 @@ export function buildRadarChart(stats = [], size = 260, maxStat = 180) {
   return { center, polygon, rings, spokes, labels };
 }
 
+// PokeAPI evolution details are sparse and conditional, so this builds a readable fallback label.
 export function describeEvolutionStep(evolutionDetails = {}) {
   const fragments = [];
 
@@ -183,6 +186,7 @@ export function describeEvolutionStep(evolutionDetails = {}) {
   return fragments.length ? fragments.join(" • ") : "Special condition";
 }
 
+// Type effectiveness stacks across dual types, including immunities that zero out damage.
 export function getDefensiveMultiplier(attackType, defendingTypes, typeMatrix) {
   return defendingTypes.reduce((multiplier, defendingType) => {
     if (multiplier === 0) {
@@ -211,6 +215,7 @@ export function getDefensiveMultiplier(attackType, defendingTypes, typeMatrix) {
   }, 1);
 }
 
+// Produces a sorted defensive matchup list so the UI can show the largest risks first.
 export function buildDefensiveProfile(pokemon, typeMatrix) {
   const defendingTypes = pokemon.types.map((entry) => entry.type.name);
 
@@ -222,6 +227,7 @@ export function buildDefensiveProfile(pokemon, typeMatrix) {
     .sort((left, right) => right.multiplier - left.multiplier);
 }
 
+// Aggregates the whole team into weaknesses, resistances, immunities, and offensive STAB coverage.
 export function summarizeTeam(team = [], typeMatrix = {}) {
   if (!team.length || !Object.keys(typeMatrix).length) {
     return {

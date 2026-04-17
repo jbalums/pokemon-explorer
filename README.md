@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Pokemon Explorer
 
-## Getting Started
+## A. Project Description
 
-First, run the development server:
+Pokemon Explorer is a creative Pokemon discovery application built with Next.js, React, TanStack Query, Tailwind CSS, and the public [PokeAPI](https://pokeapi.co/).
+
+The application lets users browse Pokemon with pagination, search and filter by type, view detailed Pokemon profiles, inspect stats and evolution chains, build a six-member team, analyze type effectiveness, and run a dedicated Pokemon battle simulator.
+
+Key features include:
+
+- Paginated Pokemon list with search and type filters
+- Pokemon detail page with stats, abilities, moves, flavor text, and evolution chain
+- Stat radar visualization for quick profile comparison
+- Team builder with defensive pressure, shared weakness, and STAB coverage analysis
+- Dedicated battle simulator page with matchup forecasting, HP meters, and turn-by-turn logs
+- Shared header and footer layout across the application
+
+## B. Setup/Installation Instructions
+
+Make sure you have Node.js installed. This project uses npm for dependency management.
+
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd pokemon-explorer
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Confirm the project builds correctly:
+
+```bash
+npm run build
+```
+
+## C. How To Run The Application
+
+Start the local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open the app in your browser:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Useful routes:
 
-## Learn More
+- `/` - Pokemon explorer, search, filters, pagination, and team builder
+- `/pokemon/[name]` - Pokemon detail page, for example `/pokemon/pikachu`
+- `/battle` - Dedicated Pokemon battle simulator
 
-To learn more about Next.js, take a look at the following resources:
+## D. Demo Link
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Demo link: `<add-demo-link-here>`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## E. Challenges Faced And Solutions
 
-## Deploy on Vercel
+One challenge was balancing PokeAPI data fetching with a smooth user experience. The app solves this by using TanStack Query for caching, stale times, and parallel requests for Pokemon cards, type data, and team members.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Another challenge was making type effectiveness readable. Instead of showing raw API relationships, the app converts type data into defensive pressure, shared weaknesses, immunities, resistances, and offensive STAB coverage.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The battle simulator was also simplified intentionally. Pokemon battle mechanics can be very deep, so the simulator uses a deterministic forecast model based on HP, attack/defense stats, speed, STAB, battle pace, and type effectiveness. This keeps the feature understandable while still being useful for matchup planning.
+
+Finally, the Pokemon list originally used infinite loading, but pagination was added to make browsing more predictable and easier to navigate during search and filtering.

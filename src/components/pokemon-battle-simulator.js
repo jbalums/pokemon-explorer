@@ -614,6 +614,7 @@ function simulateBattle({
 	const second = first === left ? right : left;
 	const turns = [];
 
+	// Run a deterministic forecast so repeated matchups are easy to compare and explain.
 	for (let round = 1; round <= settings.maxRounds; round += 1) {
 		for (const fighter of [first, second]) {
 			const defender = fighter === left ? right : left;
@@ -673,6 +674,7 @@ function buildFighter(attacker, defender, moveType, typeMatrix, settings) {
 		typeMatrix,
 	);
 	const stab = attackerTypes.includes(moveType) ? 1.5 : 1;
+	// This is a lightweight forecast formula, not a cartridge-accurate Pokemon damage engine.
 	const rawDamage =
 		(((attackStat * 1.45 + getStatValue(attacker, "speed") * 0.28) /
 			Math.max(40, defenseStat)) *
@@ -699,6 +701,7 @@ function getBestMoveType(attacker, defender, typeMatrix) {
 	const attackerTypes = attacker.types.map((entry) => entry.type.name);
 	const defenderTypes = defender.types.map((entry) => entry.type.name);
 
+	// Auto mode chooses the attacker's strongest same-type option against the defender.
 	return attackerTypes
 		.map((typeName) => ({
 			typeName,
